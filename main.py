@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from models import Base
 from database import engine
+from routes.book import book_router
 
 app = FastAPI()
 
@@ -15,9 +16,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/")
-async def home():
-    return {"message": "Hello World!"}
+app.include_router(book_router.router)
 
 # 테이블 생성 및 갱신
 Base.metadata.create_all(engine)

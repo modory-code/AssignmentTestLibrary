@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, CheckConstraint, Enum
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -14,6 +14,13 @@ Session = sessionmaker(
     autoflush=False,
     bind=engine
 )
-session = Session()
+
+# 세션 제너레이터
+def get_db():
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()
 
 Base = declarative_base()
