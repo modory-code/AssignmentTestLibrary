@@ -6,3 +6,7 @@ def get_book_list(db: Session):
         .order_by(Book.id.desc())\
         .all()
     return book_list
+
+def get_book_detail(db: Session, book_isbn: str):
+    book_detail = db.query(Book).get(book_isbn)
+    return book_detail
