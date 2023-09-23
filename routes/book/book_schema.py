@@ -20,6 +20,7 @@ class BookCreateSchema(BaseModel):
     page_count: int
     thumbnail_url: str | None = None
 
+    # 유효성 검사
     @validator('title')
     def title_not_empty(cls, v):
         if not v or not v.strip():
@@ -36,25 +37,17 @@ class BookCreateSchema(BaseModel):
             raise ValueError('출판일은 빈 값이 허용되지 않습니다.')
         return v
     @validator('isbn')
-    def isbn_not_empty(cls, v):
+    def isbn_not_empty_length(cls, v):
         if not v or not v.strip():
             raise ValueError('ISBN 번호는 빈 값이 허용되지 않습니다.')
+        check_length = (10, 13)
+        if len(v) not in check_length:
+            raise ValueError(f"ISBN 번호의 길이는 {check_length} 중 하나여야 합니다.")
         return v
     @validator('page_count')
-    def page_count_not_empty(cls, v):
+    def page_count_not_empty_positive_int(cls, v):
         if not v or not v.strip():
             raise ValueError('페이지 수는 빈 값이 허용되지 않습니다.')
+        if not isinstance(v, int) or v <= 0:
+            raise ValueError('페이지 수는 양의 정수만 허용됩니다.')
         return v
-    
-    @validator('isbn')
-    def isbn_length(self, key, value):
-        check_length = (10, 13)
-        if len(value) not in check_length:
-            raise ValueError(f"ISBN 번호의 길이는 {check_length} 중 하나여야 합니다.")
-        return value
-    
-    @validator('page_count')
-    def page_count_positive_int(self, key, value):
-        if value is None or value <= 0:
-            raise ValueError(f"페이지 번호는 양의 정수여야 합니다.")
-        return value
