@@ -10,7 +10,7 @@ def get_book_list(db: Session):
     return book_list
 
 def get_book_detail(db: Session, book_isbn: str):
-    book_detail = db.query(Book).get(book_isbn)
+    book_detail = db.query(Book).filter(Book.isbn == book_isbn)
     return book_detail
 
 def create_book(db: Session, book_create: BookCreateSchema):
