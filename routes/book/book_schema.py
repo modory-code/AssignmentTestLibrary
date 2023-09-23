@@ -51,3 +51,7 @@ class BookCreateSchema(BaseModel):
         if not isinstance(v, int) or v <= 0:
             raise ValueError('페이지 수는 양의 정수만 허용됩니다.')
         return v
+    
+class BookList(BaseModel):
+    total: int = 0
+    book_list: list[Book] = []

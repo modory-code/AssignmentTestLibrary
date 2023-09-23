@@ -3,11 +3,15 @@ from sqlalchemy.orm import Session
 from models import Book
 from routes.book.book_schema import BookCreateSchema
 
-def get_book_list(db: Session):
-    book_list = db.query(Book)\
+# 책 목록 페이지 별 불러오기
+def get_book_list(db: Session, skip: int = 0, limit: int = 0):
+    _book_list = db.query(Book)\
         .order_by(Book.id.desc())\
-        .all()
-    return book_list
+        
+    total = _book_list.count()
+    book_list = _book_list.offset(skip).limit(limit).all()
+    
+    return total, book_list
 
 def get_book_detail(db: Session, book_title: str | None = None, book_isbn: str | None = None):
     if book_title:

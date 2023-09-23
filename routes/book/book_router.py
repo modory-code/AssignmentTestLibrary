@@ -10,10 +10,13 @@ router = APIRouter(
 )
 
 # 책 목록
-@router.get("/list", response_model=list[book_schema.Book])
-def book_list(db: Session = Depends(get_db)):
-    _book_list = book_crud.get_book_list(db)
-    return _book_list
+@router.get("/list", response_model=book_schema.BookList)
+def book_list(db: Session = Depends(get_db), page: int = 0, size: int = 10):
+    total, _book_list = book_crud.get_book_list(db, skip=page*size, limit=size)
+    return {
+        'total': total,
+        'book_list': _book_list
+    }
 
 # 책 정보 조회
 @router.get("/detail/", response_model=list[book_schema.Book])
