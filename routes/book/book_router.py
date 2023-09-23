@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from starlette import status
 
 from database import get_db
 from routes.book import book_schema, book_crud
@@ -17,3 +18,8 @@ def book_list(db: Session = Depends(get_db)):
 def book_detail(book_isbn: str, db: Session = Depends(get_db)):
     book = book_crud.get_book_detail(db, book_isbn=book_isbn)
     return book
+
+@router.post("/create", status_code=status.HTTP_204_NO_CONTENT)
+def book_create(_book_create: book_schema.BookCreateSchema,
+                db: Session = Depends(get_db)):
+    book_crud.create_book(db=db, book_create=_book_create)
