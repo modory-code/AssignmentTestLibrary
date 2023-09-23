@@ -46,7 +46,7 @@ class BookCreateSchema(BaseModel):
         return v
     @validator('page_count')
     def page_count_not_empty_positive_int(cls, v):
-        if not v or not v.strip():
+        if not v:
             raise ValueError('페이지 수는 빈 값이 허용되지 않습니다.')
         if not isinstance(v, int) or v <= 0:
             raise ValueError('페이지 수는 양의 정수만 허용됩니다.')
