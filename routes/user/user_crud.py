@@ -15,3 +15,12 @@ def create_user(db: Session, user_create: UserCreate):
     )
     db.add(db_create_user)
     db.commit()
+
+# 회원 가입 전 충돌 확인
+def get_existing_user(db: Session, user_create: UserCreate):
+    check_user = db.query(User).\
+        filter(
+            (User.username==user_create.username) |
+            (User.email==user_create.email)
+        ).first()
+    return check_user
