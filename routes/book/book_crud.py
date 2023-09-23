@@ -9,8 +9,11 @@ def get_book_list(db: Session):
         .all()
     return book_list
 
-def get_book_detail(db: Session, book_isbn: str):
-    book_detail = db.query(Book).filter(Book.isbn == book_isbn).first()
+def get_book_detail(db: Session, book_title: str | None = None, book_isbn: str | None = None):
+    if book_title:
+        book_detail = db.query(Book).filter(Book.title == book_title).first()
+    if book_isbn:
+        book_detail = db.query(Book).filter(Book.isbn == book_isbn).first()
     if book_detail is None:
         return None
     return [book_detail]

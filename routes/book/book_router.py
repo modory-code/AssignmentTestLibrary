@@ -16,9 +16,16 @@ def book_list(db: Session = Depends(get_db)):
     return _book_list
 
 # 책 정보 조회
-@router.get("/detail/{book_isbn}", response_model=list[book_schema.Book])
-def book_detail(book_isbn: str, db: Session = Depends(get_db)):
-    book = book_crud.get_book_detail(db, book_isbn=book_isbn)
+@router.get("/detail/", response_model=list[book_schema.Book])
+def book_detail(book_title: str | None = None, book_isbn: str | None = None, db: Session = Depends(get_db)):
+    if book_title is None and book_isbn is None:
+        # isbn이나 title 모두 들어오지 않은 경우
+        raise HTTPException(status_code=400, detail="책 제목이나 ISBN 번호 둘 중 하나는 필수로 입력해야 합니다.")
+    else:
+        if book_title:
+            book = book_crud.get_book_detail(db, book_title=book_title)
+        if book_isbn:
+            book = book_crud.get_book_detail(db, book_isbn=book_isbn)
     if book is None:
         raise HTTPException(status_code=404, detail="책을 찾을 수 없습니다.")
     return book
