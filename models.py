@@ -52,3 +52,9 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     role = Column(RoleEnum, nullable=False)
 
+    # 모든 컬럼 스키마 null 무결성 검사
+    @validates('username', 'password', 'email', 'role')
+    def not_null_validate(self, key, value):
+        if not value:
+            raise ValueError(f"{key} 컬럼은 빈 값이 허용되지 않습니다.")
+        return value
