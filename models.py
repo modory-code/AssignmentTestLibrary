@@ -12,7 +12,7 @@ class Book(Base):
     title = Column(String(200), nullable=False)
     author = Column(String(100), nullable=False)
     publication_date = Column(String(10), nullable=False)
-    isbn = Column(String(13), nullable=False)
+    isbn = Column(String(13), unique=True, nullable=False)
     page_count = Column(Integer, nullable=False)
     thumbnail_url = Column(String(500))
     # ISBN, PageCount CHECK 제약 조건 설정
@@ -49,6 +49,6 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(50), nullable=False)
     password = Column(String(100), nullable=False)
-    email = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
     role = Column(RoleEnum, nullable=False)
 
