@@ -24,3 +24,7 @@ def get_existing_user(db: Session, user_create: UserCreate):
             (User.email==user_create.email)
         ).first()
     return check_user
+
+# 로그인
+def get_user(db: Session, username: str):
+    return db.query(User).filter(User.username==username).first()
