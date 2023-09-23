@@ -10,8 +10,10 @@ def get_book_list(db: Session):
     return book_list
 
 def get_book_detail(db: Session, book_isbn: str):
-    book_detail = db.query(Book).filter(Book.isbn == book_isbn)
-    return book_detail
+    book_detail = db.query(Book).filter(Book.isbn == book_isbn).first()
+    if book_detail is None:
+        return None
+    return [book_detail]
 
 def create_book(db: Session, book_create: BookCreateSchema):
     db_create_book = Book(
