@@ -1,17 +1,18 @@
 from pydantic import BaseModel, validator, EmailStr
 from enum import Enum
 
-class roleEnum(str, Enum):
+class RoleEnum(str, Enum):
     ADMIN = 'admin'
     USER = 'user'
 
+# 회원 가입 스키마
 class UserCreate(BaseModel):
     id: int
     username: str
     password1: str
     password2: str
     email: EmailStr
-    role: roleEnum
+    role: RoleEnum
 
     # 유효성 검사
     @validator('username', 'password1', 'password2', 'email', 'role')
