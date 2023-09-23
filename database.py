@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from starlette.config import Config
 
 # Database 접속 정보 주소
-SQLALCHEMY_DATABASE_URL = "mariadb+mariadbconnector://modory:moco1!@127.0.0.1:3306/library"
+config = Config('.env')
+SQLALCHEMY_DATABASE_URL = config('SQLALCHEMY_DATABASE_URL')
 
 # 커넥션 풀 생성
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
