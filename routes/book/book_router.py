@@ -65,7 +65,7 @@ def book_create(
     book_crud.create_book(db=db, book_create=_book_create)
 
 # 책 수정
-@router.put("/update", response_model=book_schema.Book)
+@router.put("/update/{_book_isbn}", response_model=book_schema.Book)
 def book_update(
     _book_isbn: str,
     _book_update: book_schema.BookUpdateSchema,
