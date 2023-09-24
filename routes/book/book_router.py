@@ -4,6 +4,8 @@ from starlette import status
 
 from database import get_db
 from routes.book import book_schema, book_crud
+from routes.user.user_schema import TokenData
+from routes.user.user_router import verify_token
 
 router = APIRouter(
     prefix="/api/book",
@@ -11,7 +13,15 @@ router = APIRouter(
 
 # 책 목록
 @router.get("/list", response_model=book_schema.BookList)
-def book_list(db: Session = Depends(get_db), page: int = 0, size: int = 10):
+def book_list(
+        db: Session = Depends(get_db),
+        token_data: TokenData = Depends(verify_token),
+        page: int = 0, size: int = 10
+    ):
+    # 권한 확인
+    if not (token_data.role == "admin" or token_data.role == "user"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="로그인 후 이용 가능합니다.")
+
     total, _book_list = book_crud.get_book_list(db, skip=page*size, limit=size)
     return {
         'total': total,
@@ -20,7 +30,14 @@ def book_list(db: Session = Depends(get_db), page: int = 0, size: int = 10):
 
 # 책 정보 조회
 @router.get("/detail/", response_model=list[book_schema.Book])
-def book_detail(book_title: str | None = None, book_isbn: str | None = None, db: Session = Depends(get_db)):
+def book_detail(
+        book_title: str | None = None, book_isbn: str | None = None,
+        db: Session = Depends(get_db), token_data: TokenData = Depends(verify_token)
+    ):
+    # 권한 확인
+    if not (token_data.role == "admin" or token_data.role == "user"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="로그인 후 이용 가능합니다.")
+    
     if book_title is None and book_isbn is None:
         # isbn이나 title 모두 들어오지 않은 경우
         raise HTTPException(status_code=400, detail="책 제목이나 ISBN 번호 둘 중 하나는 필수로 입력해야 합니다.")
@@ -35,6 +52,11 @@ def book_detail(book_title: str | None = None, book_isbn: str | None = None, db:
 
 # 책 등록
 @router.post("/create", status_code=status.HTTP_204_NO_CONTENT)
-def book_create(_book_create: book_schema.BookCreateSchema,
-                db: Session = Depends(get_db)):
+def book_create(
+        _book_create: book_schema.BookCreateSchema,
+        db: Session = Depends(get_db),
+        token_data: TokenData = Depends(verify_token)
+    ):
+    if token_data.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="관리자만 접근 가능합니다. 권한을 확인해주십시오.")
     book_crud.create_book(db=db, book_create=_book_create)

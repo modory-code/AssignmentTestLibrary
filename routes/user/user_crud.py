@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from models import User
-from routes.user.user_schema import UserCreate
+from routes.user.user_schema import UserCreate, TokenData
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 
@@ -28,3 +28,12 @@ def get_existing_user(db: Session, user_create: UserCreate):
 # 로그인
 def get_user(db: Session, username: str):
     return db.query(User).filter(User.username==username).first()
+
+# JWT 유저와 권한 일치 확인
+def get_user_role(db: Session, token_data: TokenData):
+    jwt_token = db.query(User).\
+        filter(
+            (User.username==token_data.username) &
+            (User.role==token_data.role)
+        ).first()
+    return jwt_token
