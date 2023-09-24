@@ -43,3 +43,6 @@ class BookCreateSchema(BaseModel):
 class BookList(BaseModel):
     total: int = 0
     book_list: list[Book] = []
+
+class BookUpdateSchema(BookCreateSchema):
+    id: int
