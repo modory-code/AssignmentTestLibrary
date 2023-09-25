@@ -135,9 +135,19 @@ def book_delete(
 def book_search(
     title: str | None = None,
     author: str | None = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    token_data: TokenData = Depends(verify_token)
 ):
+    # 권한 확인
+    if not (token_data.role == "admin" or token_data.role == "user"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="로그인 후 이용 가능합니다.")
 
+        # 삭제 목록 빈값 확인
+    if not title or not author:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="검색 값이 비어 있습니다."
+        )
 
     if title:
         total, books = book_crud.search_book(db, title=title)
@@ -149,6 +159,7 @@ def book_search(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="검색 결과가 없습니다."
         )
+    
     return {
         "total": total,
         "book_list": books
