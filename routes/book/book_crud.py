@@ -62,3 +62,16 @@ def delete_book(db: Session, book_isbn_list: list[str]):
     # 유효성 통과한 책들 삭제
     db.query(Book).filter(Book.isbn.in_(valid_isbn_list)).delete(synchronize_session=False)
     db.commit()
+
+# 책 검색
+def search_book(db: Session, title: str | None = None, author: str | None = None):
+    print(title)
+    print(author)
+    if title:
+        print(f"%{title}%")
+        data = db.query(Book).filter(Book.title.like(f"%{title}%"))
+    elif author:
+        data = db.query(Book).filter(Book.author.like(f"%{author}%")).all()
+    # else:
+        print(data)
+    return data

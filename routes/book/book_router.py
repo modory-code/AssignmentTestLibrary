@@ -108,5 +108,48 @@ def book_delete(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="삭제 대상 ISBN 리스트가 비어 있습니다."
         )
+    # isbn 유효성 확인
+    not_valid_isbn_list = []
+    valid_isbn_list = []
+    for i in isbn:
+        check_isbn = book_crud.get_book_detail(db, book_isbn=i)
+        if check_isbn is None:
+            not_valid_isbn_list.append(i)
+        else:
+            valid_isbn_list.append(i)
+    if not_valid_isbn_list:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "message": "없는 ISBN 번호가 있습니다. 삭제 요청할 ISBN 번호를 다시 확인해주시기 바랍니다.",
+                "request_isbn": isbn,
+                "not_isbn": not_valid_isbn_list,
+                "valid_isbn": valid_isbn_list
+            }
+        )
     # 요청 책 목록 삭제
     book_crud.delete_book(db, book_isbn_list=isbn)
+
+# 책 검색
+@router.get("/search", response_model=book_schema.BookList)
+def book_search(
+    title: str | None = None,
+    author: str | None = None,
+    db: Session = Depends(get_db)
+):
+    # title = search_params.title,
+    # author = search_params.author
+
+    if title:
+        print('api', title)
+        books = book_crud.search_book(db, title=title)
+    elif author:
+        books = book_crud.search_book(db, author=author)
+        
+
+    if not books:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="검색 결과가 없습니다."
+        )
+    return books

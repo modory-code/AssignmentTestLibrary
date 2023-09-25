@@ -50,3 +50,7 @@ class BookUpdateSchema(BookCreateSchema):
 
 class BookDeleteSchema(BaseModel):
     isbn: List[str]
+
+class BookSearchSchema(BaseModel):
+    title: str | None = None
+    author: str | None = None
