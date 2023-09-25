@@ -50,3 +50,15 @@ def update_book(db: Session, db_book: Book, book_update: BookUpdateSchema):
     db.commit()
     db.refresh(db_book)
     return db_book
+
+# 책 삭제
+def delete_book(db: Session, book_isbn_list: list[str]):
+    # 삭제 시점 책 isbn 유효성 확인
+    valid_isbn_list = []
+    for isbn in book_isbn_list:
+        book = db.query(Book).filter(Book.isbn == isbn).first()
+        if book:
+            valid_isbn_list.append(book)
+    # 유효성 통과한 책들 삭제
+    db.query(Book).filter(Book.isbn.in_(valid_isbn_list)).delete(synchronize_session=False)
+    db.commit()

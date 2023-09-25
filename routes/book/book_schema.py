@@ -1,4 +1,5 @@
 from pydantic import BaseModel, validator
+from typing import List
 
 class Book(BaseModel):
     id: int
@@ -46,3 +47,6 @@ class BookList(BaseModel):
 
 class BookUpdateSchema(BookCreateSchema):
     id: int
+
+class BookDeleteSchema(BaseModel):
+    isbn: List[str]

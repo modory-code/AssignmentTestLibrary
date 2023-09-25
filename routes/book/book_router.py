@@ -85,6 +85,28 @@ def book_update(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="관리자만 책 수정이 가능합니다. 권한을 확인해주십시오."
         )
-    # 책 수정
+    # 책 내용 업데이트
     db_update_book = book_crud.update_book(db, db_book=db_get_book, book_update=_book_update)
     return db_update_book
+
+# 책 삭제
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
+def book_delete(
+    isbn: book_schema.BookDeleteSchema,
+    db: Session = Depends(get_db),
+    token_date: TokenData = Depends(verify_token)
+):
+    # 권한 확인
+    if token_date.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="관리자만 책 삭제가 가능합니다. 권한을 확인해주십시오."
+        )
+    # 삭제 목록 빈값 확인
+    if not isbn:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="삭제 대상 ISBN 리스트가 비어 있습니다."
+        )
+    # 요청 책 목록 삭제
+    book_crud.delete_book(db, book_isbn_list=isbn)
