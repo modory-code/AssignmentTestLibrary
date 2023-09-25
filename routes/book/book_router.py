@@ -137,19 +137,19 @@ def book_search(
     author: str | None = None,
     db: Session = Depends(get_db)
 ):
-    # title = search_params.title,
-    # author = search_params.author
+
 
     if title:
-        print('api', title)
-        books = book_crud.search_book(db, title=title)
+        total, books = book_crud.search_book(db, title=title)
     elif author:
-        books = book_crud.search_book(db, author=author)
+        total, books = book_crud.search_book(db, author=author)
         
-
     if not books:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="검색 결과가 없습니다."
         )
-    return books
+    return {
+        "total": total,
+        "book_list": books
+    }

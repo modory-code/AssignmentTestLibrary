@@ -65,13 +65,12 @@ def delete_book(db: Session, book_isbn_list: list[str]):
 
 # 책 검색
 def search_book(db: Session, title: str | None = None, author: str | None = None):
-    print(title)
-    print(author)
     if title:
-        print(f"%{title}%")
-        data = db.query(Book).filter(Book.title.like(f"%{title}%"))
+        query = db.query(Book).filter(Book.title.like(f"%{title}%")).order_by(Book.id.desc())
+        total = query.count()
+        data_list = query.all()
     elif author:
-        data = db.query(Book).filter(Book.author.like(f"%{author}%")).all()
-    # else:
-        print(data)
-    return data
+        query = db.query(Book).filter(Book.author.like(f"%{author}%")).order_by(Book.id.desc())
+        total = query.count()
+        data_list = query.all()
+    return total, data_list
