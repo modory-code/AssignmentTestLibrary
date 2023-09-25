@@ -1,5 +1,13 @@
 # 과제
 
+## 수행 환경 및 기술 버전
+
+-   운영체제: Windows 11 pro
+-   언어: Python v3.10.5
+-   웹 프레임워크: FastAPI v0.103.1
+-   데이터베이스: MariaDB v11.3.0
+-   ORM: SQLAlchemy v2.0.21
+
 ## 명령어
 
 ### 패키지 설치
